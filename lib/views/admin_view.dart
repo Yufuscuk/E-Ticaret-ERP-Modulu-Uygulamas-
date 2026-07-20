@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../controllers/product_controller.dart';
 import '../models/product.dart';
+import '../controllers/auth_controller.dart';
+import 'product_list_view.dart';
 
 class AdminView extends ConsumerWidget {
   const AdminView({super.key});
@@ -63,9 +65,6 @@ class AdminView extends ConsumerWidget {
     final productsState = ref.watch(productProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Admin Paneli (Stok Yönetimi)'),
-      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showAddEditDialog(context, ref),
         child: const Icon(Icons.add),

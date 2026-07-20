@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../controllers/product_controller.dart';
 import '../controllers/cart_controller.dart';
+import '../controllers/auth_controller.dart';
 import 'cart_view.dart';
 import 'customer_view.dart';
-import 'admin_view.dart';
 import 'product_detail_view.dart';
 
 class ProductListView extends ConsumerStatefulWidget {
@@ -29,6 +29,7 @@ class _ProductListViewState extends ConsumerState<ProductListView> {
     final productsState = ref.watch(productProvider);
     final cartItems = ref.watch(cartProvider);
     final cartNotifier = ref.read(cartProvider.notifier);
+    final authUser = ref.watch(authProvider);
 
     // Sepetteki toplam ürün miktarı
     final cartItemCount = cartItems.fold(0, (sum, item) => sum + item.quantity);
@@ -80,9 +81,18 @@ class _ProductListViewState extends ConsumerState<ProductListView> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(color: Colors.deepPurple),
-              child: Text('Netsim E-Ticaret', style: TextStyle(color: Colors.white, fontSize: 24)),
+            DrawerHeader(
+              decoration: const BoxDecoration(color: Colors.deepPurple),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  const Text('Netsim B2B', style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  if (authUser != null)
+                    Text('Hoşgeldin, ${authUser.username}', style: const TextStyle(color: Colors.white70, fontSize: 14)),
+                ],
+              ),
             ),
             ListTile(
               leading: const Icon(Icons.person),
@@ -92,12 +102,12 @@ class _ProductListViewState extends ConsumerState<ProductListView> {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => const CustomerView()));
               },
             ),
+            const Divider(),
             ListTile(
-              leading: const Icon(Icons.admin_panel_settings),
-              title: const Text('Admin Paneli'),
+              leading: const Icon(Icons.logout, color: Colors.red),
+              title: const Text('Çıkış Yap', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
               onTap: () {
-                Navigator.pop(context);
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const AdminView()));
+                ref.read(authProvider.notifier).logout();
               },
             ),
           ],
