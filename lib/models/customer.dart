@@ -22,4 +22,16 @@ class Customer {
     required this.email,
     required this.balance,
   });
+
+  factory Customer.fromJson(Map<String, dynamic> json) {
+    return Customer(
+      id: json['CARI_NO'] ?? 0,
+      name: json['CARI_ADI']?.toString() ?? 'Bilinmeyen Cari',
+      email: json['EMAIL']?.toString() ?? 'email@yok.com',
+      balance: CustomerBalance(
+        totalDebit: (json['TOPLAM_BORC'] ?? 0).toDouble(),
+        totalCredit: (json['TOPLAM_ALACAK'] ?? 0).toDouble(),
+      ),
+    );
+  }
 }

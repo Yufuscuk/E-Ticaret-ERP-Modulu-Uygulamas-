@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // Şimdilik Base URL'i localhost veya bir test sunucusu olarak belirliyoruz.
 // Gerçek API bilgisi geldiğinde burası güncellenecektir.
-const String baseUrl = 'http://localhost:8000/api/v1/';
+const String baseUrl = 'http://10.11.11.64:8080/api/';
 
 // API İsteklerini yönetecek olan servis sınıfımız.
 class ApiService {
@@ -18,7 +18,7 @@ class ApiService {
       return response;
     } on DioException catch (e) {
       // Hata yönetimi (Loglama, kullanıcıya mesaj gösterme vs. eklenebilir)
-      throw Exception('API Hatası: \${e.message}');
+      throw Exception('API Hatası: ${e.message}');
     }
   }
 
@@ -28,7 +28,7 @@ class ApiService {
       final response = await _dio.post(endpoint, data: data);
       return response;
     } on DioException catch (e) {
-      throw Exception('API Hatası: \${e.message}');
+      throw Exception('API Hatası: ${e.message}');
     }
   }
 }

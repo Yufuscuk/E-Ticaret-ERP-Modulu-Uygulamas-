@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/product.dart';
+import '../services/api_service.dart';
 
 // Şimdilik API entegrasyonu olmadığı için mock veri kullanıyoruz.
 class ProductController extends Notifier<AsyncValue<List<Product>>> {
@@ -13,18 +14,21 @@ class ProductController extends Notifier<AsyncValue<List<Product>>> {
     try {
       state = const AsyncValue.loading();
       
-      // Simüle edilmiş ağ gecikmesi
-      await Future.delayed(const Duration(seconds: 1));
+      final apiService = ref.read(apiServiceProvider);
+      final response = await apiService.getRequest('products');
+      
+      final List<dynamic> data = response.data;
+      final List<Product> products = data.map((item) {
+        return Product(
+          id: item['STOK_NO'] ?? 0,
+          name: item['STOK_ADI']?.toString() ?? 'Bilinmeyen Ürün',
+          code: item['STOK_KODU']?.toString() ?? 'KOD-YOK',
+          price: (item['FIYAT'] ?? 0).toDouble(), // DB'den gelen fiyat
+          stockQuantity: (item['BAKIYE'] ?? 0).toInt(), // DB'den gelen stok
+        );
+      }).toList();
 
-      // Mock Veri
-      final List<Product> mockProducts = [
-        Product(id: 1, name: 'Oyuncu Bilgisayarı', code: 'PC-001', price: 25000.0, stockQuantity: 5),
-        Product(id: 2, name: 'Mekanik Klavye', code: 'KB-002', price: 1500.0, stockQuantity: 15),
-        Product(id: 3, name: 'Kablosuz Mouse', code: 'MS-003', price: 800.0, stockQuantity: 0), // Stokta yok
-        Product(id: 4, name: '27" Monitör', code: 'MN-004', price: 6500.0, stockQuantity: 2),
-      ];
-
-      state = AsyncValue.data(mockProducts);
+      state = AsyncValue.data(products);
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
     }
