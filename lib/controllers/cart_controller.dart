@@ -44,6 +44,29 @@ class CartController extends Notifier<List<CartItem>> {
     }
   }
 
+  // Sepetteki ürün miktarını doğrudan belirle (Toplu giriş için)
+  void setCartQuantity(Product product, int quantity) {
+    if (quantity <= 0) {
+      state = state.where((item) => item.product.id != product.id).toList();
+      return;
+    }
+
+    // Stok sınırını kontrol et
+    final finalQuantity = quantity > product.stockQuantity ? product.stockQuantity : quantity;
+
+    final existingItemIndex = state.indexWhere((item) => item.product.id == product.id);
+    
+    if (existingItemIndex >= 0) {
+      final existingItem = state[existingItemIndex];
+      final updatedItem = existingItem.copyWith(quantity: finalQuantity);
+      final newState = [...state];
+      newState[existingItemIndex] = updatedItem;
+      state = newState;
+    } else {
+      state = [...state, CartItem(product: product, quantity: finalQuantity)];
+    }
+  }
+
   // Sepeti tamamen boşalt
   void clearCart() {
     state = [];

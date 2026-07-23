@@ -323,7 +323,66 @@ class _ProductListViewState extends ConsumerState<ProductListView> {
                                                   child: const Icon(Icons.remove, size: 12, color: Colors.deepPurple),
                                                 ),
                                               ),
-                                              Text('$quantityInCart', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.deepPurple)),
+                                              InkWell(
+                                                onTap: () {
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (context) {
+                                                      final ctrl = TextEditingController(text: quantityInCart.toString());
+                                                      return AlertDialog(
+                                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                                                        title: const Text('Miktar Girin', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                                                        content: TextField(
+                                                          controller: ctrl,
+                                                          keyboardType: TextInputType.number,
+                                                          autofocus: true,
+                                                          decoration: InputDecoration(
+                                                            hintText: 'Örn: 300',
+                                                            filled: true,
+                                                            fillColor: Colors.grey.shade50,
+                                                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+                                                          ),
+                                                        ),
+                                                        actions: [
+                                                          TextButton(
+                                                            onPressed: () => Navigator.pop(context),
+                                                            child: const Text('İptal', style: TextStyle(color: Colors.grey)),
+                                                          ),
+                                                          ElevatedButton(
+                                                            style: ElevatedButton.styleFrom(
+                                                              backgroundColor: Colors.deepPurple,
+                                                              foregroundColor: Colors.white,
+                                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))
+                                                            ),
+                                                            onPressed: () {
+                                                              final val = int.tryParse(ctrl.text) ?? 0;
+                                                              cartNotifier.setCartQuantity(product, val);
+                                                              Navigator.pop(context);
+                                                            },
+                                                            child: const Text('Tamam'),
+                                                          ),
+                                                        ],
+                                                      );
+                                                    },
+                                                  );
+                                                },
+                                                child: Container(
+                                                  padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius: BorderRadius.circular(4),
+                                                    border: Border.all(color: Colors.deepPurple.shade100),
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: Colors.black.withOpacity(0.05),
+                                                        blurRadius: 2,
+                                                        offset: const Offset(0, 1),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  child: Text('$quantityInCart', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.deepPurple)),
+                                                ),
+                                              ),
                                               InkWell(
                                                 onTap: quantityInCart >= product.stockQuantity ? null : () => cartNotifier.addToCart(product),
                                                 child: Container(

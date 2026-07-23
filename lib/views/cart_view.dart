@@ -83,7 +83,66 @@ class CartView extends ConsumerWidget {
                                       ),
                                     ),
                                     const SizedBox(width: 12),
-                                    Text('${item.quantity}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                                    InkWell(
+                                      onTap: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            final ctrl = TextEditingController(text: item.quantity.toString());
+                                            return AlertDialog(
+                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                                              title: const Text('Miktar Girin', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                                              content: TextField(
+                                                controller: ctrl,
+                                                keyboardType: TextInputType.number,
+                                                autofocus: true,
+                                                decoration: InputDecoration(
+                                                  hintText: 'Örn: 300',
+                                                  filled: true,
+                                                  fillColor: Colors.grey.shade50,
+                                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+                                                ),
+                                              ),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () => Navigator.pop(context),
+                                                  child: const Text('İptal', style: TextStyle(color: Colors.grey)),
+                                                ),
+                                                ElevatedButton(
+                                                  style: ElevatedButton.styleFrom(
+                                                    backgroundColor: Colors.deepPurple,
+                                                    foregroundColor: Colors.white,
+                                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))
+                                                  ),
+                                                  onPressed: () {
+                                                    final val = int.tryParse(ctrl.text) ?? 0;
+                                                    cartNotifier.setCartQuantity(item.product, val);
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: const Text('Tamam'),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(4),
+                                          border: Border.all(color: Colors.grey.shade300),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.black.withOpacity(0.05),
+                                              blurRadius: 2,
+                                              offset: const Offset(0, 1),
+                                            ),
+                                          ],
+                                        ),
+                                        child: Text('${item.quantity}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                                      ),
+                                    ),
                                     const SizedBox(width: 12),
                                     InkWell(
                                       onTap: item.quantity >= item.product.stockQuantity
