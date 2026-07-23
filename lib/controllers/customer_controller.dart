@@ -26,36 +26,25 @@ class CustomerState {
 class CustomerController extends Notifier<AsyncValue<CustomerState>> {
   @override
   AsyncValue<CustomerState> build() {
-    fetchCustomerData();
-    return const AsyncValue.loading();
+    final mockCustomer = Customer(
+      id: 1,
+      name: 'Ahmet Yılmaz',
+      email: 'ahmet@example.com',
+      balance: CustomerBalance(
+        totalDebit: 15000.0,
+        totalCredit: 5000.0,
+      ),
+    );
+
+    return AsyncValue.data(CustomerState(
+      customer: mockCustomer,
+      orderHistory: [],
+    ));
   }
 
   Future<void> fetchCustomerData() async {
-    try {
-      state = const AsyncValue.loading();
-      await Future.delayed(const Duration(seconds: 1)); // Ağ simülasyonu
-
-      // Mock Müşteri
-      final mockCustomer = Customer(
-        id: 1,
-        name: 'Ahmet Yılmaz',
-        email: 'ahmet@example.com',
-        balance: CustomerBalance(
-          totalDebit: 15000.0,
-          totalCredit: 5000.0,
-        ), // Kalan borç 10.000 TL
-      );
-
-      // Mock Sipariş Geçmişi
-      final List<Order> mockOrders = []; // Başlangıçta sipariş geçmişi boş
-
-      state = AsyncValue.data(CustomerState(
-        customer: mockCustomer,
-        orderHistory: mockOrders,
-      ));
-    } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
-    }
+    // API entegrasyonu gelene kadar bu metod mock data dönecek.
+    // Build metodunda senkron döndüğümüz için burası şu an sadece refresh için kullanılabilir.
   }
 
   // Sipariş verildiğinde cariye borç ekleyen metod
